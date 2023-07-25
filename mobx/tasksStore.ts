@@ -2,7 +2,7 @@ import { Task } from '@/types';
 import { getTasksFromAPI } from '@/utils/tasksFunctions';
 import { makeAutoObservable } from 'mobx';
 
-class Store {
+class TasksStore {
   tasks: Task[] = [];
   newTask: Task | null = null;
 
@@ -27,5 +27,5 @@ class Store {
     console.log(this.tasks);
   }
 }
-const store = new Store();
-export default store;
+const tasksStore = new TasksStore();
+export default tasksStore;

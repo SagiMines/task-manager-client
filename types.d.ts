@@ -6,7 +6,7 @@ export type Task = {
   completed: boolean;
 };
 
-export type userCredentials = {
+export type UserCredentials = {
   username: string;
   password: string;
 };

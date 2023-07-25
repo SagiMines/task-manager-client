@@ -1,7 +1,7 @@
-import { userCredentials } from '@/types';
+import { UserCredentials } from '@/types';
 import { callAPI } from './globalFunctions';
 
-export const verifyUser = async (userCredentials: userCredentials) => {
+export const verifyUser = async (userCredentials: UserCredentials) => {
   const req = await callAPI('http://localhost:8080/auth', {
     method: 'POST',
     credentials: 'include',

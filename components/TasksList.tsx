@@ -1,16 +1,16 @@
 'use client';
-import store from '@/store/tasks';
+import tasksStore from '@/mobx/tasksStore';
 import { useEffect } from 'react';
 import { observer } from 'mobx-react';
 
 const TasksList = () => {
   useEffect(() => {
-    store.getTasks();
+    tasksStore.getTasks();
   }, []);
 
   return (
     <div>
-      {store?.tasks.map(task => (
+      {tasksStore?.tasks.map(task => (
         <div key={task.id}>
           <p>{task.id}</p>
           <p>{task.title}</p>

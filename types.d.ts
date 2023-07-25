@@ -10,3 +10,9 @@ export type UserCredentials = {
   username: string;
   password: string;
 };
+
+export type FlowGenerator<Type, Return> = Generator<
+  Promise<Response>,
+  Return,
+  T
+>;

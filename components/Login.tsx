@@ -1,24 +1,24 @@
 'use client';
-import loginStore from '@/store/loginForm';
-import { verifyUser } from '@/utils/loginFunctions';
+import loginStore from '@/mobx/loginStore';
+import { flowResult } from 'mobx';
 import { observer } from 'mobx-react';
+import { useRouter } from 'next/navigation';
 
 const Login = () => {
+  const { push } = useRouter();
+
+  // Handle user's sign in click action
   const handleClick: React.MouseEventHandler<HTMLButtonElement> = async e => {
     e.preventDefault();
-    const userCrdentials = {
-      username: loginStore.username,
-      password: loginStore.password,
-    };
-    console.log(userCrdentials);
-    const res = await verifyUser(userCrdentials);
+    const res = await flowResult(loginStore.verifyUser());
     if (res.error) {
       loginStore.setError(res.error);
     } else {
       loginStore.setError('');
+      push('/');
     }
-    console.log(res);
   };
+
   return (
     <section className="w-full">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">

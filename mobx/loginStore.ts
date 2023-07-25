@@ -1,16 +1,19 @@
 import { action, computed, flow, makeAutoObservable, observable } from 'mobx';
-import { NextResponse } from 'next/server';
+import { verifyUser, checkTokenOnServer } from '@/utils/loginFunctions';
+import { FlowGenerator } from '@/types';
 
 class LoginStore {
   _username = '';
   _password = '';
   _error = '';
+  _isUserExists = false;
 
   constructor() {
     makeAutoObservable(this, {
       _username: observable,
       _password: observable,
       _error: observable,
+      _isUserExists: observable,
       username: computed,
       password: computed,
       error: computed,
@@ -18,7 +21,12 @@ class LoginStore {
       updatePassword: action,
       setError: action,
       verifyUser: flow,
+      checkToken: flow,
     });
+  }
+
+  get isUserExists() {
+    return this._isUserExists;
   }
 
   get username() {
@@ -33,6 +41,10 @@ class LoginStore {
     return this._error;
   }
 
+  updateIsUserExists(val: boolean) {
+    this._isUserExists = val;
+  }
+
   updateUsername(val: string) {
     this._username = val;
   }
@@ -45,23 +57,22 @@ class LoginStore {
     this._error = val;
   }
 
-  *verifyUser(): Generator<
-    Promise<Response>,
-    Record<string, any>,
-    NextResponse<Record<string, string | null>>
+  *verifyUser(): FlowGenerator<
+    Record<'error' | 'token', string | boolean | null>,
+    Record<'error' | 'token', string | boolean | null>
   > {
-    const req = yield fetch('http://localhost:8080/auth', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: JSON.stringify({
-        username: this._username,
-        password: this._password,
-      }),
+    const res = yield verifyUser({
+      username: this._username,
+      password: this._password,
     });
-    const res = yield req.json();
+    return res;
+  }
+
+  *checkToken(): FlowGenerator<
+    Record<'token', boolean>,
+    Record<'token', boolean>
+  > {
+    const res = yield checkTokenOnServer();
     return res;
   }
 }

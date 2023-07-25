@@ -1,13 +1,18 @@
-import { Task } from '@/types';
+import { FlowGenerator, Task } from '@/types';
 import { getTasksFromAPI } from '@/utils/tasksFunctions';
-import { makeAutoObservable } from 'mobx';
+import { computed, flow, makeAutoObservable, observable } from 'mobx';
 
 class TasksStore {
-  tasks: Task[] = [];
-  newTask: Task | null = null;
+  _tasks: Task[] = [];
+  _newTask: Task | null = null;
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {
+      _tasks: observable,
+      _newTask: observable,
+      tasks: computed,
+      getTasks: flow,
+    });
   }
 
   //   createTask() {
@@ -22,9 +27,13 @@ class TasksStore {
 
   //   }
 
-  async getTasks() {
-    this.tasks = await getTasksFromAPI();
-    console.log(this.tasks);
+  get tasks() {
+    return this._tasks;
+  }
+
+  *getTasks(): FlowGenerator<Task[], void> {
+    const res = yield getTasksFromAPI();
+    this._tasks = res;
   }
 }
 const tasksStore = new TasksStore();

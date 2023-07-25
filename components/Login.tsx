@@ -11,9 +11,12 @@ const Login = () => {
   const handleClick: React.MouseEventHandler<HTMLButtonElement> = async e => {
     e.preventDefault();
     const res = await flowResult(loginStore.verifyUser());
-    if (res.error) {
+    if (res.error && typeof res.error === 'string') {
       loginStore.setError(res.error);
     } else {
+      console.log(res);
+      if (typeof res.token === 'boolean')
+        loginStore.updateIsUserExists(res.token);
       loginStore.setError('');
       push('/');
     }

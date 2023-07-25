@@ -13,3 +13,12 @@ export const verifyUser = async (userCredentials: UserCredentials) => {
   const res = await req.json();
   return res;
 };
+
+export const checkTokenOnServer = async () => {
+  const req = await callAPI('http://localhost:8080/check-token', {
+    method: 'GET',
+    credentials: 'include',
+  });
+  const res = await req.json();
+  return res;
+};

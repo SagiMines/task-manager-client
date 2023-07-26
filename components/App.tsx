@@ -1,6 +1,8 @@
+import tasksStore from '@/mobx/tasksStore';
 import TaskForm from './TaskForm';
 import TasksList from './TasksList';
 import TasksViewButtons from './TasksViewButtons';
+import { observer } from 'mobx-react';
 
 const App = () => {
   return (
@@ -15,15 +17,21 @@ const App = () => {
         <TasksViewButtons />
       </section>
 
-      <section id="tasks-view">
-        <TasksList />
-      </section>
+      {/* Shows the tasks list view only when it is clicked or at the start of the app */}
+      {tasksStore.tasksViewClick && (
+        <section id="tasks-view">
+          <TasksList />
+        </section>
+      )}
 
-      <section id="create-edit-view">
-        <TaskForm />
-      </section>
+      {/* Shows the create task view only when it is clicked */}
+      {tasksStore.createTaskClick && (
+        <section id="create-edit-view">
+          <TaskForm />
+        </section>
+      )}
     </>
   );
 };
 
-export default App;
+export default observer(App);

@@ -1,0 +1,15 @@
+.controlButtonsUnClicked {
+  @apply px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 hover:text-blue-700;
+}
+
+.controlButtonsClicked {
+  @apply cursor-default px-4 py-2 text-sm font-medium text-white bg-blue-700 border border-blue-800;
+}
+
+.roundedLeft {
+  @apply rounded-l-md;
+}
+
+.roundedRight {
+  @apply rounded-r-md;
+}

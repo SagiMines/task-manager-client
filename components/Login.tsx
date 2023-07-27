@@ -1,5 +1,5 @@
 'use client';
-import loginStore from '@/mobx/loginStore';
+import userStore from '@/mobx/userStore';
 import { flowResult } from 'mobx';
 import { observer } from 'mobx-react';
 import { useRouter } from 'next/navigation';
@@ -10,15 +10,16 @@ const Login = () => {
   // Handle user's sign in click action
   const handleClick: React.MouseEventHandler<HTMLButtonElement> = async e => {
     e.preventDefault();
-    const res = await flowResult(loginStore.verifyUser());
+    const res = await flowResult(userStore.verifyUser());
     if (res.error && typeof res.error === 'string') {
-      loginStore.setError(res.error);
+      userStore.setError(res.error);
     } else {
       console.log(res);
-      if (typeof res.token === 'boolean')
-        loginStore.updateIsUserExists(res.token);
-      loginStore.setError('');
-      push('/');
+      if (typeof res.userId === 'number') {
+        userStore.setUserId(res.userId);
+        userStore.setError('');
+        push('/');
+      }
     }
   };
 
@@ -44,8 +45,8 @@ const Login = () => {
                   id="text"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="username"
-                  defaultValue={loginStore.username}
-                  onChange={e => loginStore.updateUsername(e.target.value)}
+                  defaultValue={userStore.username}
+                  onChange={e => userStore.updateUsername(e.target.value)}
                   required
                 />
               </div>
@@ -62,8 +63,8 @@ const Login = () => {
                   id="password"
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  defaultValue={loginStore.password}
-                  onChange={e => loginStore.updatePassword(e.target.value)}
+                  defaultValue={userStore.password}
+                  onChange={e => userStore.updatePassword(e.target.value)}
                   required
                 />
               </div>
@@ -74,9 +75,9 @@ const Login = () => {
               >
                 Sign in
               </button>
-              {loginStore.error && (
+              {userStore.error && (
                 <p className="text-red-600 flex justify-center">
-                  {loginStore.error}
+                  {userStore.error}
                 </p>
               )}
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">

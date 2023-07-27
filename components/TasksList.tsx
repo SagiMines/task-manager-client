@@ -3,213 +3,91 @@ import tasksStore from '@/mobx/tasksStore';
 import { useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { flowResult } from 'mobx';
+import userStore from '@/mobx/userStore';
+import Loader from './Loader';
 
 const TasksList = () => {
+  const handleDelete = async (taskId: number) => {
+    // Delete the specific task
+    await flowResult(tasksStore.deleteTask(taskId));
+    // Get the updated task list
+    if (userStore.userId) {
+      await flowResult(tasksStore.getTasks(userStore.userId));
+      tasksStore.setWhichTaskClicked(null);
+    }
+  };
+
+  const handleEdit = (taskId: number) => {
+    tasksStore.setWhichEditClicked(taskId);
+  };
+
+  // Get the user's tasks
   useEffect(() => {
-    flowResult(tasksStore.getTasks());
+    if (userStore.userId) {
+      flowResult(tasksStore.getTasks(userStore.userId));
+    }
   }, []);
 
   return (
-    <div className="m-5 w-fit sm:mx-auto overflow-x-auto shadow-md rounded-lg">
-      <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-        <thead className="text-xs  text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-          <tr>
-            <th className="px-5 sm:px-6 py-3">Title</th>
-            <th className="px-5 sm:px-6 py-3">Description</th>
-            <th className="px-5 sm:px-6 py-3">Completed</th>
-            <th className="px-5 sm:px-6 py-3">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-            <th className="px-5 sm:px-6 py-4 font-medium text-gray-900 dark:text-white">
-              Intro to CSS
-            </th>
-            <td className="px-5 sm:px-6 py-3">Adam</td>
-            <td className="px-5 sm:px-6 py-3">858</td>
-            <td className="flex gap-3 px-5 sm:px-6 py-3">
-              <a
-                href="#"
-                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+    <div
+      className={`m-5 w-fit sm:mx-auto overflow-x-auto rounded-lg ${
+        tasksStore.tasks && tasksStore.tasks.length ? 'shadow-md' : ''
+      }`}
+    >
+      {!tasksStore.tasks && <Loader />}
+      {tasksStore.tasks && !tasksStore.tasks.length && (
+        <div className="text-xl font-bold text-rose-600">
+          No tasks available.
+        </div>
+      )}
+      {tasksStore.tasks?.length && (
+        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+          <thead className="text-xs  text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+              <th className="px-5 sm:px-6 py-3">Title</th>
+              <th className="px-5 sm:px-6 py-3">Description</th>
+              <th className="px-5 sm:px-6 py-3">Completed</th>
+              <th className="px-5 sm:px-6 py-3">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tasksStore.tasks?.map(task => (
+              <tr
+                key={task.id}
+                className="bg-white border-b dark:bg-gray-900 dark:border-gray-700"
               >
-                Edit
-              </a>
-              <a
-                href="#"
-                className="font-medium text-red-600 dark:text-red-500 hover:underline"
-              >
-                Delete
-              </a>
-            </td>
-          </tr>
-          <tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-            <td className="px-5 sm:px-6 py-4 font-medium text-gray-900 dark:text-white">
-              A Long and Winding
-            </td>
-            <td className="px-5 sm:px-6 py-3">Adam</td>
-            <td className="px-5 sm:px-6 py-3">112</td>
-            <td className="flex gap-3 px-5 sm:px-6 py-3">
-              <a
-                href="#"
-                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-              >
-                Edit
-              </a>
-              <a
-                href="#"
-                className="font-medium text-red-600 dark:text-red-500 hover:underline"
-              >
-                Delete
-              </a>
-            </td>
-          </tr>
-          <tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-            <th className="px-5 sm:px-6 py-4 font-medium text-gray-900 dark:text-white">
-              Intro to JavaScript
-            </th>
-            <td className="px-5 sm:px-6 py-3">Chris</td>
-            <td className="px-5 sm:px-6 py-3">1,280</td>
-            <td className="flex gap-3 px-5 sm:px-6 py-3">
-              <a
-                href="#"
-                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-              >
-                Edit
-              </a>
-              <a
-                href="#"
-                className="font-medium text-red-600 dark:text-red-500 hover:underline"
-              >
-                Delete
-              </a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                <th className="px-5 sm:px-6 py-4 font-medium text-gray-900 dark:text-white">
+                  {task.title}
+                </th>
+                <td className="px-5 sm:px-6 py-3">{task.description}</td>
+                <td className="px-5 sm:px-6 py-3">
+                  {task.completed ? 'Yes' : 'No'}
+                </td>
+                <td className="flex gap-3 px-5 sm:px-6 py-3">
+                  <span
+                    onClick={() => handleEdit(task.id)}
+                    className="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                  >
+                    Edit
+                  </span>
+                  <span
+                    onClick={() => handleDelete(task.id)}
+                    className="cursor-pointer font-medium text-red-600 dark:text-red-500 hover:underline"
+                  >
+                    Delete
+                  </span>
+                  {tasksStore.whichTaskClicked === task.id && (
+                    <span>
+                      <Loader taskAction />
+                    </span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
-    //
-    //   <table classNameName="table-auto w-full text-sm text-left text-gray-500 dark:text-gray-400">
-    //     <thead classNameName="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-    //       <tr>
-    //         <th scope="col" classNameName="px-6 py-3">
-    //           Title
-    //         </th>
-    //         <th scope="col" classNameName="px-6 py-3">
-    //           Description
-    //         </th>
-    //         <th scope="col" classNameName="px-6 py-3">
-    //           Completed
-    //         </th>
-    //         <th scope="col" classNameName="px-6 py-3">
-    //           Action
-    //         </th>
-    //       </tr>
-    //     </thead>
-    //     <tbody>
-    //       <tr classNameName="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-    //         <th
-    //           scope="row"
-    //           classNameName="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-    //         >
-    //           Apple MacBookdssssssssssss ssssssssss sssssssssgdfgdfg
-    //           dfgdfgdfgdfgdfg Pro 17"
-    //         </th>
-    //         <td classNameName="px-6 py-4">Silver</td>
-    //         <td classNameName="px-6 py-4">Laptop</td>
-    //         <td classNameName="px-6 py-4">
-    //           <a
-    //             href="#"
-    //             classNameName="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-    //           >
-    //             Edit
-    //           </a>
-    //         </td>
-    //       </tr>
-    //       <tr classNameName="border-b bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
-    //         <th
-    //           scope="row"
-    //           classNameName="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-    //         >
-    //           Microsoft Surface Pro
-    //         </th>
-    //         <td classNameName="px-6 py-4">White</td>
-    //         <td classNameName="px-6 py-4">Laptop PC</td>
-    //         <td classNameName="px-6 py-4">
-    //           <a
-    //             href="#"
-    //             classNameName="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-    //           >
-    //             Edit
-    //           </a>
-    //         </td>
-    //       </tr>
-    //       <tr classNameName="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-    //         <th
-    //           scope="row"
-    //           classNameName="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-    //         >
-    //           Magic Mouse 2
-    //         </th>
-    //         <td classNameName="px-6 py-4">Black</td>
-    //         <td classNameName="px-6 py-4">Accessories</td>
-    //         <td classNameName="px-6 py-4">
-    //           <a
-    //             href="#"
-    //             classNameName="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-    //           >
-    //             Edit
-    //           </a>
-    //         </td>
-    //       </tr>
-    //       <tr classNameName="border-b bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
-    //         <th
-    //           scope="row"
-    //           classNameName="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-    //         >
-    //           Google Pixel Phone
-    //         </th>
-    //         <td classNameName="px-6 py-4">Gray</td>
-    //         <td classNameName="px-6 py-4">Phone</td>
-    //         <td classNameName="px-6 py-4">
-    //           <a
-    //             href="#"
-    //             classNameName="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-    //           >
-    //             Edit
-    //           </a>
-    //         </td>
-    //       </tr>
-    //       <tr>
-    //         <th
-    //           scope="row"
-    //           classNameName="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-    //         >
-    //           Apple Watch 5
-    //         </th>
-    //         <td classNameName="px-6 py-4">Red</td>
-    //         <td classNameName="px-6 py-4">Wearables</td>
-    //         <td classNameName="px-6 py-4">
-    //           <a
-    //             href="#"
-    //             classNameName="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-    //           >
-    //             Edit
-    //           </a>
-    //         </td>
-    //       </tr>
-    //     </tbody>
-    //   </table>
-    // </div>
-
-    // <div>
-    //   {tasksStore?.tasks?.map(task => (
-    //     <div key={task.id}>
-    //       <p>{task.id}</p>
-    //       <p>{task.title}</p>
-    //       <p>{task.description}</p>
-    //     </div>
-    //   ))}
-    // </div>
   );
 };
 

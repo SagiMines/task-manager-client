@@ -18,16 +18,21 @@ const App = () => {
       </section>
 
       {/* Shows the tasks list view only when it is clicked or at the start of the app */}
-      {tasksStore.tasksViewClick && (
+      {tasksStore.tasksViewClick && !tasksStore.whichEditClicked && (
         <section id="tasks-view">
           <TasksList />
         </section>
       )}
 
       {/* Shows the create task view only when it is clicked */}
-      {tasksStore.createTaskClick && (
+      {(tasksStore.createTaskClick || tasksStore.whichEditClicked) && (
         <section id="create-edit-view">
-          <TaskForm />
+          {/* Shows the edit section when the 'edit' button is clicked */}
+          {tasksStore.whichEditClicked && (
+            <TaskForm taskId={tasksStore.whichEditClicked} />
+          )}
+          {/* Shows the create section when clicking on the 'create task' button */}
+          {!tasksStore.whichEditClicked && <TaskForm />}
         </section>
       )}
     </>

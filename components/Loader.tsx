@@ -1,18 +1,36 @@
-import { MagnifyingGlass } from 'react-loader-spinner';
+import { LoaderProps } from '@/types';
+import { MagnifyingGlass, Oval } from 'react-loader-spinner';
 
-const Loader = () => {
+const Loader = ({ taskAction }: LoaderProps) => {
   return (
     <div className="w-full h-full flex items-center justify-center">
-      <MagnifyingGlass
-        visible={true}
-        height="120"
-        width="120"
-        ariaLabel="MagnifyingGlass-loading"
-        wrapperStyle={{}}
-        wrapperClass="MagnifyingGlass-wrapper"
-        glassColor="#c0efff"
-        color="#e15b64"
-      />
+      {!taskAction && (
+        <MagnifyingGlass
+          visible={true}
+          height="120"
+          width="120"
+          ariaLabel="MagnifyingGlass-loading"
+          wrapperStyle={{}}
+          wrapperClass="MagnifyingGlass-wrapper"
+          glassColor="#c0efff"
+          color="#e15b64"
+        />
+      )}
+
+      {taskAction && (
+        <Oval
+          height={25}
+          width={25}
+          color="rgb(29 78 216)"
+          wrapperStyle={{}}
+          wrapperClass=""
+          visible={true}
+          ariaLabel="oval-loading"
+          secondaryColor="rgb(150 205 245)"
+          strokeWidth={2}
+          strokeWidthSecondary={2}
+        />
+      )}
     </div>
   );
 };

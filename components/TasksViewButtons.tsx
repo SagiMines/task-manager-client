@@ -26,7 +26,7 @@ const TasksViewButtons = () => {
         } ${styles.roundedRight}`}
         onClick={() => tasksStore.updateCreateTaskClick()}
       >
-        Create Task
+        {tasksStore.whichEditClicked ? 'Edit Task' : 'Create Task'}
       </button>
     </div>
   );

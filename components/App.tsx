@@ -2,11 +2,16 @@ import tasksStore from '@/mobx/tasksStore';
 import TaskForm from './TaskForm';
 import TasksList from './TasksList';
 import TasksViewButtons from './TasksViewButtons';
+import Header from './Header';
 import { observer } from 'mobx-react';
 
 const App = () => {
   return (
     <>
+      <header>
+        <Header />
+      </header>
+
       <section id="title">
         <div className="flex justify-center my-20">
           <h1 className="font-bold text-4xl from-stone-800">Task Manager</h1>

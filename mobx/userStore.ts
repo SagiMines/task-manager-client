@@ -3,7 +3,8 @@ import {
   verifyUser,
   checkTokenOnServer,
   createUser,
-} from '@/utils/loginFunctions';
+  logoutFromApp,
+} from '@/utils/userFunctions';
 import { FlowGenerator, User } from '@/types';
 
 class UserStore {
@@ -42,7 +43,7 @@ class UserStore {
     return this._isSignButtonClicked;
   }
 
-  setUserId(val: number) {
+  setUserId(val: number | null) {
     this._userId = val;
   }
 
@@ -94,6 +95,14 @@ class UserStore {
     Record<'userId', number | null>
   > {
     const res = yield checkTokenOnServer();
+    return res;
+  }
+
+  *logout(): FlowGenerator<
+    Record<'error' | 'done', string | boolean>,
+    Record<'error' | 'done', string | boolean>
+  > {
+    const res = yield logoutFromApp();
     return res;
   }
 }

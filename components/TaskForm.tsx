@@ -4,6 +4,8 @@ import tasksStore from '@/mobx/tasksStore';
 import { TaskFormProps } from '@/types';
 import { flowResult } from 'mobx';
 import { useEffect } from 'react';
+import { observer } from 'mobx-react';
+import Loader from './Loader';
 
 const TaskForm = ({ taskId }: TaskFormProps) => {
   const getSpecificTask = () => {
@@ -35,7 +37,7 @@ const TaskForm = ({ taskId }: TaskFormProps) => {
           userId: userStore.userId,
           title: null,
           description: null,
-          completed: null,
+          completed: false,
         });
       }
       if (tasksStore.newTask) {
@@ -50,6 +52,8 @@ const TaskForm = ({ taskId }: TaskFormProps) => {
 
   const handleClick: React.MouseEventHandler<HTMLButtonElement> = async e => {
     e.preventDefault();
+    tasksStore.updateTaskFormClick(true);
+    tasksStore.setTaskDetailsError(null);
     if (taskId && tasksStore.currentTask) {
       if (
         !tasksStore.currentTask.description ||
@@ -58,7 +62,6 @@ const TaskForm = ({ taskId }: TaskFormProps) => {
         const error = 'Title and description cannot be empty!';
         tasksStore.setTaskDetailsError(error);
       } else {
-        tasksStore.setTaskDetailsError(null);
         const updatedTask = await flowResult(tasksStore.updateTask(taskId));
         if (tasksStore.tasks && updatedTask) {
           for (let i = 0; i < tasksStore.tasks.length; i++) {
@@ -74,14 +77,17 @@ const TaskForm = ({ taskId }: TaskFormProps) => {
         const error = 'Title and description cannot be empty!';
         tasksStore.setTaskDetailsError(error);
       } else {
-        tasksStore.setTaskDetailsError(null);
         const res = await flowResult(tasksStore.createTask());
-        if (tasksStore.tasks && res) {
-          tasksStore.updateTasks([...tasksStore.tasks, res]);
+        if (res) {
+          if (!tasksStore.tasks) {
+            tasksStore.updateTasks([res]);
+          } else {
+            tasksStore.updateTasks([...tasksStore.tasks, res]);
+          }
         }
       }
     }
-
+    tasksStore.updateTaskFormClick(false);
     tasksStore.updateTasksViewClick();
   };
 
@@ -130,7 +136,14 @@ const TaskForm = ({ taskId }: TaskFormProps) => {
             key={Math.random()}
             id="completed"
             type="checkbox"
-            defaultChecked={taskId ? tasksStore.currentTask?.completed : false}
+            defaultChecked={
+              taskId
+                ? tasksStore.currentTask?.completed
+                : tasksStore.newTask?.completed === false ||
+                  tasksStore.newTask?.completed === undefined
+                ? false
+                : true
+            }
             className="sr-only peer"
             onChange={handleChange}
           />
@@ -152,8 +165,14 @@ const TaskForm = ({ taskId }: TaskFormProps) => {
           </p>
         )}
       </div>
+
+      {tasksStore.taskFormClick && (
+        <div className="m-5">
+          <Loader taskFormAction />
+        </div>
+      )}
     </form>
   );
 };
 
-export default TaskForm;
+export default observer(TaskForm);

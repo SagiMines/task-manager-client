@@ -1,11 +1,17 @@
 import { makeAutoObservable } from 'mobx';
-import { verifyUser, checkTokenOnServer } from '@/utils/loginFunctions';
-import { FlowGenerator } from '@/types';
+import {
+  verifyUser,
+  checkTokenOnServer,
+  createUser,
+} from '@/utils/loginFunctions';
+import { FlowGenerator, User } from '@/types';
 
 class UserStore {
   _username = '';
   _password = '';
+  _confirmPassword = '';
   _error = '';
+  _isSignButtonClicked = false;
   _userId: number | null = null;
 
   constructor() {
@@ -24,12 +30,24 @@ class UserStore {
     return this._password;
   }
 
+  get confirmPassword() {
+    return this._confirmPassword;
+  }
+
   get error() {
     return this._error;
   }
 
+  get isSignButtonClicked() {
+    return this._isSignButtonClicked;
+  }
+
   setUserId(val: number) {
     this._userId = val;
+  }
+
+  setIsSignButtonClicked(val: boolean) {
+    this._isSignButtonClicked = val;
   }
 
   updateUsername(val: string) {
@@ -38,6 +56,10 @@ class UserStore {
 
   updatePassword(val: string) {
     this._password = val;
+  }
+
+  updateConfirmPassword(val: string) {
+    this._confirmPassword = val;
   }
 
   setError(val: string) {
@@ -51,6 +73,18 @@ class UserStore {
     const res = yield verifyUser({
       username: this._username,
       password: this._password,
+    });
+    return res;
+  }
+
+  *createUser(): FlowGenerator<
+    Record<'error', string> | User,
+    Record<'error', string> | User
+  > {
+    const res = yield createUser({
+      username: this._username,
+      password: this._password,
+      confirmPassword: this._confirmPassword,
     });
     return res;
   }

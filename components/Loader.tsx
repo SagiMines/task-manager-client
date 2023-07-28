@@ -1,10 +1,10 @@
 import { LoaderProps } from '@/types';
 import { MagnifyingGlass, Oval } from 'react-loader-spinner';
 
-const Loader = ({ taskAction }: LoaderProps) => {
+const Loader = ({ taskAction, signAction, taskFormAction }: LoaderProps) => {
   return (
     <div className="w-full h-full flex items-center justify-center">
-      {!taskAction && (
+      {!taskAction && !signAction && !taskFormAction && (
         <MagnifyingGlass
           visible={true}
           height="120"
@@ -17,7 +17,7 @@ const Loader = ({ taskAction }: LoaderProps) => {
         />
       )}
 
-      {taskAction && (
+      {(taskAction || signAction || taskFormAction) && (
         <Oval
           height={25}
           width={25}

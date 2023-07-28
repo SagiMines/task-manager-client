@@ -16,6 +16,7 @@ class TasksStore {
   _whichEditClicked: number | null = null;
   _tasksViewClick = true;
   _createTaskClick = false;
+  _taskFormClick = false;
   _taskDetailsError: string | null = null;
 
   constructor() {
@@ -64,6 +65,10 @@ class TasksStore {
     this._taskDetailsError = val;
   }
 
+  updateTaskFormClick(val: boolean) {
+    this._taskFormClick = val;
+  }
+
   get tasksViewClick() {
     return this._tasksViewClick;
   }
@@ -95,9 +100,14 @@ class TasksStore {
     return this._taskDetailsError;
   }
 
-  *getTasks(userId: number): FlowGenerator<Task[], void> {
+  get taskFormClick() {
+    return this._taskFormClick;
+  }
+
+  *getTasks(userId: number): FlowGenerator<Task[], Task[]> {
     const res = yield getUserTasksFromAPI(userId);
-    this._tasks = res;
+    // this._tasks = res;
+    return res;
   }
 
   *getTask(userId: number): FlowGenerator<Task, Task> {

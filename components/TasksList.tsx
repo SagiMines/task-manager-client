@@ -12,7 +12,12 @@ const TasksList = () => {
     await flowResult(tasksStore.deleteTask(taskId));
     // Get the updated task list
     if (userStore.userId) {
-      await flowResult(tasksStore.getTasks(userStore.userId));
+      const res = await flowResult(tasksStore.getTasks(userStore.userId));
+      if (res instanceof Array) {
+        tasksStore.updateTasks(res);
+      } else {
+        tasksStore.updateTasks([]);
+      }
       tasksStore.setWhichTaskClicked(null);
     }
   };
@@ -21,11 +26,20 @@ const TasksList = () => {
     tasksStore.setWhichEditClicked(taskId);
   };
 
+  const getUserTasks = async () => {
+    if (userStore.userId) {
+      const res = await flowResult(tasksStore.getTasks(userStore.userId));
+      if (res instanceof Array) {
+        tasksStore.updateTasks(res);
+      } else {
+        tasksStore.updateTasks([]);
+      }
+    }
+  };
+
   // Get the user's tasks
   useEffect(() => {
-    if (userStore.userId) {
-      flowResult(tasksStore.getTasks(userStore.userId));
-    }
+    getUserTasks();
   }, []);
 
   return (
@@ -40,7 +54,7 @@ const TasksList = () => {
           No tasks available.
         </div>
       )}
-      {tasksStore.tasks?.length && (
+      {tasksStore.tasks && tasksStore.tasks?.length !== 0 && (
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead className="text-xs  text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>

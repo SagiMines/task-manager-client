@@ -35,3 +35,12 @@ export const checkTokenOnServer = async () => {
   const res = await req.json();
   return res;
 };
+
+export const logoutFromApp = async () => {
+  const req = await callAPI('http://localhost:8080/logout', {
+    method: 'GET',
+    credentials: 'include',
+  });
+  const res = await req.json();
+  return res;
+};

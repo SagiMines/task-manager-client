@@ -1,9 +1,8 @@
 'use client';
 import App from '@/components/App';
 import Loader from '@/components/Loader';
-// import TasksList from '@/components/TasksList';
 import userStore from '@/mobx/userStore';
-import { flowResult } from 'mobx';
+import { checkIfUserAlreadyLoggedIn } from '@/utils/globalFunctions';
 import { observer } from 'mobx-react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -11,22 +10,14 @@ import { useEffect } from 'react';
 function Home() {
   const { push } = useRouter();
 
-  // Checks if there is a user existing by verifing the JWT on the server
-  const checkIfUserExists = async () => {
-    const res = await flowResult(userStore.checkToken());
-    if (!res.userId) {
-      push('/login');
-    } else {
-      userStore.setUserId(res.userId);
-    }
-  };
-
   useEffect(() => {
-    checkIfUserExists();
+    const route = '/login';
+    const mainRoute = true;
+    checkIfUserAlreadyLoggedIn({ push, route, mainRoute });
   }, []);
 
   return (
-    <main className="w-full h-full">
+    <main>
       {!userStore.userId && <Loader />}
       {userStore.userId && <App />}
     </main>

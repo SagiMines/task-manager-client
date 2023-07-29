@@ -13,3 +13,7 @@
 .roundedRight {
   @apply rounded-r-md;
 }
+
+.mainContainer {
+  @apply w-full justify-center inline-flex rounded-md;
+}

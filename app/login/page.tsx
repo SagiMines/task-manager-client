@@ -1,28 +1,26 @@
 'use client';
 import Login from '@/components/Login';
 import userStore from '@/mobx/userStore';
-import { flowResult } from 'mobx';
 import { observer } from 'mobx-react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { checkIfUserAlreadyLoggedIn } from '@/utils/globalFunctions';
+import Loader from '@/components/Loader';
 
 const LoginPage = () => {
   const { push } = useRouter();
 
-  // If a user is already logged in the page will redirect to the main app
-  const checkIfUserAlreadyLoggedIn = async () => {
-    const res = await flowResult(userStore.checkToken());
-    if (res.userId) {
-      userStore.setUserId(res.userId);
-      push('/');
-    }
-  };
-
   useEffect(() => {
-    checkIfUserAlreadyLoggedIn();
+    const route = '/';
+    checkIfUserAlreadyLoggedIn({ push, route });
   }, []);
 
-  return <>{!userStore.userId && <Login />}</>;
+  return (
+    <>
+      {!userStore.userId && userStore.userId !== 0 && <Loader />}
+      {userStore.userId === 0 && <Login />}
+    </>
+  );
 };
 
 export default observer(LoginPage);

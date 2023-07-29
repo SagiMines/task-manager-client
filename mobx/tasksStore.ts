@@ -9,14 +9,23 @@ import {
 import { makeAutoObservable } from 'mobx';
 
 class TasksStore {
+  // All the tasks of the user
   _tasks: Task[] | null = null;
+  // When creating a new task
   _newTask: NewTask | null = null;
+  // When editing an exiting task
   _currentTask: Task | null = null;
+  // When the 'Delete' button is clicked the id of the task is saved here
   _whichTaskClicked: number | null = null;
+  // When the 'Edit' button is clicked the id of the task is saved here
   _whichEditClicked: number | null = null;
+  // Sets to true when the 'Task List' button is clicked
   _tasksViewClick = true;
+  // Sets to true when the 'Create Task' button is clicked
   _createTaskClick = false;
+  // When the Create/Edit Task form is submitted the value sets to true
   _taskFormClick = false;
+  // When submitting the form with invalid credentials the error is saved here
   _taskDetailsError: string | null = null;
 
   constructor() {
@@ -106,7 +115,6 @@ class TasksStore {
 
   *getTasks(userId: number): FlowGenerator<Task[], Task[]> {
     const res = yield getUserTasksFromAPI(userId);
-    // this._tasks = res;
     return res;
   }
 

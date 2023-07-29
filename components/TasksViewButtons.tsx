@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 
 const TasksViewButtons = () => {
   return (
-    <div className="w-full justify-center inline-flex rounded-md " role="group">
+    <div className={styles.mainContainer} role="group">
       <button
         type="button"
         className={`${
@@ -16,7 +16,6 @@ const TasksViewButtons = () => {
       >
         Tasks List
       </button>
-
       <button
         type="button"
         className={`${

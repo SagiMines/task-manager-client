@@ -8,11 +8,17 @@ import {
 import { FlowGenerator, User } from '@/types';
 
 class UserStore {
+  // User's username
   _username = '';
+  // User's password
   _password = '';
+  // User's confirm username
   _confirmPassword = '';
+  // If there is an error in the login/register process the error will be saved here
   _error = '';
+  // When the login/register form is submitted the value will be set to true
   _isSignButtonClicked = false;
+  // Saves the user's ID when he logs in
   _userId: number | null = null;
 
   constructor() {

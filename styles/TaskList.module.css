@@ -1,0 +1,43 @@
+.mainContainer {
+  @apply m-5 w-fit sm:mx-auto overflow-x-auto rounded-lg;
+}
+
+.mainContainerShadow {
+  @apply shadow-md;
+}
+
+.noTasksContainer {
+  @apply text-xl font-bold text-rose-600;
+}
+
+.table {
+  @apply w-full text-sm text-left text-gray-500 dark:text-gray-400;
+}
+
+.tableHead {
+  @apply text-xs  text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400;
+}
+
+.tableHeading {
+  @apply px-5 sm:px-6 py-3;
+}
+
+.tableHeadingEmphasised {
+  @apply px-5 sm:px-6 py-4 font-medium text-gray-900 dark:text-white;
+}
+
+.tableRow {
+  @apply bg-white border-b dark:bg-gray-900 dark:border-gray-700;
+}
+
+.tableDataAction {
+  @apply flex gap-3 px-5 sm:px-6 py-3;
+}
+
+.editButton {
+  @apply cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline;
+}
+
+.deleteButton {
+  @apply cursor-pointer font-medium text-red-600 dark:text-red-500 hover:underline;
+}

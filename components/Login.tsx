@@ -3,9 +3,9 @@ import SignForm from './SignForm';
 
 const Login = () => {
   return (
-    <section className="w-full">
+    <div className="w-full">
       <SignForm signIn={true} />
-    </section>
+    </div>
   );
 };
 

@@ -1,0 +1,7 @@
+.titleContainer {
+  @apply flex justify-center my-20;
+}
+
+.title {
+  @apply font-bold text-4xl from-stone-800;
+}
